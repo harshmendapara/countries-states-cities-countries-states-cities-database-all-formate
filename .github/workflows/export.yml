@@ -1,0 +1,71 @@
+name: Export JSON/XML/YAML/CSV/PLIST
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - '**'
+      - '!sql/**.sql'
+      - '!scripts/export**'
+  workflow_dispatch:
+    inputs:
+      pass:
+        description: 'Passcode'
+        required: true
+
+jobs:
+  export_json_xml:
+    name: JSON/XML/YAML/CSV/PLIST
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          extensions: intl #optional
+          ini-values: "post_max_size=256M" #optional
+
+      - name: Create & Import DB
+        run: |
+          ls -R
+          sudo /etc/init.d/mysql start
+          mysql -uroot -proot -e "CREATE DATABASE world;"
+          mysql -uroot -proot -e "SHOW DATABASES;"
+          mysql -uroot -proot world < sql/world.sql
+
+      - name: Composer Dependencies
+        run: cd scripts/vendor && composer install
+
+      - name: Run Export Scripts
+        run: |
+          php scripts/export.php
+          php scripts/export_xml.php
+          php scripts/export_yaml.php
+          php scripts/export_csv.php
+          [ -d plist ] || mkdir plist
+          python3 scripts/export_plist.py
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: Add exported JSON, CSV, XML, YAML & PLIST files
+          committer: Darshan Gada <gadadarshan@gmail.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          signoff: true
+          branch: export/Files
+          delete-branch: true
+          title: '(chore): Export JSON, CSV, XML, YAML & PLIST files'
+          labels: |
+            exports
+            automated
+          reviewers: dr5hn, valerianpereira
