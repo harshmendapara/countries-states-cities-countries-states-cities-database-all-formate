@@ -10,7 +10,7 @@
 
 ## Author
 
-**countries-states-cities-countries-states-cities-database-all-formate** © [Harsh Mendapara](https://github.com/Harsh02051998/), Released under the [MIT](./LICENSE) License.<br>
+**countries-states-cities-countries-states-cities-database-all-formate** © [Harsh Mendapara](https://github.com/harshmendapara/), Released under the [MIT](./LICENSE) License.<br>
 Authored and maintained by Harsh Mendapara with help from contributors ([list](https://github.com/Harsh02051998/countries-states-cities-countries-states-cities-database-all-formate/graphs/contributors)).
 
 > GitHub [@Harsh Mendapara](https://github.com/harshmendapara)
